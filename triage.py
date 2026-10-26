@@ -17,7 +17,7 @@ W_REPLY_TO_MISMATCH = 2
 PHISHING_THRESHOLD = 5
 SUSPICIOUS_THRESHOLD = 3
 
-def check_mail(folder, flagged=None):
+def check_mail(folder, flagged=None): 
     if flagged is None:
         flagged = []
 
@@ -28,7 +28,8 @@ def check_mail(folder, flagged=None):
     for fn in files:
         if not fn.endswith(".eml"):
             continue
-        raw = open(os.path.join(folder, fn), encoding="utf-8", errors="ignore").read()
+        with open(os.path.join(folder, fn), encoding="utf-8", errors="ignore") as f:
+            raw = f.read()
         s = 0
         try:
             frm = re.search("From: (.*)", raw).group(1)
@@ -78,9 +79,11 @@ def check_mail(folder, flagged=None):
     print("checked", len(scores), "mails")
     for v in verdicts:
         print(" ", v[0], "->", v[1], "(score", str(v[2]) + ")")
-    out = open("results.txt", "w")
-    out.write(str(verdicts))
-    out.close()
+
+
+    with open("results.txt", "w", encoding="utf-8") as out:
+        out.write(str(verdicts))
+
     print("flagged:", flagged)
     return verdicts
 
